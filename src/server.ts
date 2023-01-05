@@ -3,6 +3,7 @@ import {Request, Response} from 'express';
 import bodyParser from 'body-parser';
 import {filterImageFromURL, deleteLocalFiles} from './util/util';
 
+
 (async () => {
 
   // Init the Express application
@@ -29,7 +30,17 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
   //   the filtered image file [!!TIP res.sendFile(filteredpath); might be useful]
 
   /**************************************************************************** */
-  app.get("/filteredimage/",async (req: Request,res: Response)=>{
+  app.get("/filteredimage", async (req: Request, res: Response) => {
+    const image_url = req.query.image_url.toString();
+    if (!image_url) {
+      return res.status(400).send({ auth: false, message: 'Image url is missing or malformed' });
+    }
+
+    const filteredPath = await filterImageFromURL(image_url);
+
+    res.status(200).sendFile(filteredPath, () => deleteLocalFiles([filteredPath]));
+  });
+  /*app.get("/filteredimage/",async (req: Request,res: Response)=>{
     let {image_url}: any = req.query;
     if( !image_url ) {
       return res.status(422)
@@ -41,7 +52,7 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
         res.on(`finish`,()=>deleteLocalFiles([result]));
         }).catch((err)=>res.status(422).send(err))
       }
-  } );
+  } );*/
   //! END @TODO1
   
   // Root Endpoint
