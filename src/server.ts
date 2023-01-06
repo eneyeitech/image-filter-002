@@ -31,13 +31,13 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
 
   /**************************************************************************** */
   app.get("/filteredimage", async (req: Request, res: Response) => {
-    const image_url = req.query.image_url.toString();
+    const image_url : string = req.query.image_url.toString();
     if (!image_url) {
       return res.status(400).send({ auth: false, message: 'Image url is missing or malformed' });
     }
 
-    const filteredPath = await filterImageFromURL(image_url);
-
+    const filteredPath : string = await filterImageFromURL(image_url);
+    //console.info(filteredPath);
     res.status(200).sendFile(filteredPath, () => deleteLocalFiles([filteredPath]));
   });
   /*app.get("/filteredimage/",async (req: Request,res: Response)=>{
